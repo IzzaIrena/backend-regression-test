@@ -19,15 +19,6 @@ const followRoutes =require("./routes/follow");
 
 const app = express();
 
-// =========================
-// FUNCTION DB CONNECTION (INI YANG PENTING)
-// =========================
-function connectDB() {
-  return db.authenticate()
-    .then(() => console.log("Database connected"))
-    .catch((err) => console.log("DB Error:", err));
-}
-
 // Helmet security headers
 app.use(
   helmet({
@@ -75,7 +66,18 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-connectDB();
+db.sync()
+  .then(() => {
+    console.log("Database synced");
+
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log("DB Sync Error:", err);
+  });
 // database
 // db.authenticate()
 //   .then(() => console.log("Database connected"))
