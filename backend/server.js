@@ -6,6 +6,7 @@ const { body, validationResult } = require("express-validator");
 
 const db = require("./config/database");
 
+
 // PENTING: LOAD RELASI MODEL
 require("./models");
 
@@ -18,6 +19,15 @@ const followRoutes =require("./routes/follow");
 
 const app = express();
 
+// =========================
+// FUNCTION DB CONNECTION (INI YANG PENTING)
+// =========================
+function connectDB() {
+  return db.authenticate()
+    .then(() => console.log("Database connected"))
+    .catch((err) => console.log("DB Error:", err));
+}
+
 // Helmet security headers
 app.use(
   helmet({
@@ -28,7 +38,9 @@ app.use("/uploads", express.static("uploads"));
 
 // middleware
 app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:5174"],
+ origin: [
+  "http://localhost:5173",
+  "http://localhost:5174"],
   methods: ["GET", "POST", "PUT", "DELETE"], 
   credentials: true
 }));
@@ -63,37 +75,35 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-
+connectDB();
 // database
-db.authenticate()
-  .then(() => console.log("Database connected"))
-  .catch((err) => console.log("DB Error:", err));
+// db.authenticate()
+//   .then(() => console.log("Database connected"))
+//   .catch((err) => console.log("DB Error:", err));
 
 
-app.post(
-  "/api/login",
-  [
-    body("email")
-      .isEmail()
-      .withMessage("Format email tidak valid"),
+// app.post(
+//   "/api/login",
+//   [
+//     body("email")
+//       .isEmail()
+//       .withMessage("Format email tidak valid"),
 
-    body("password")
-      .isLength({ min: 6 })
-      .withMessage("Password minimal 6 karakter"),
-  ],
-  (req, res) => {
-    const errors = validationResult(req);
+//     body("password")
+//       .isLength({ min: 6 })
+//       .withMessage("Password minimal 6 karakter"),
+//   ],
+//   (req, res) => {
+//     const errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array(),
-      });
-    }
+//     if (!errors.isEmpty()) {
+//       return res.status(400).json({
+//         errors: errors.array(),
+//       });
+//     }
 
-    res.send("LOGIN SERVER LANGSUNG");
-  }
-);
+//     res.send("LOGIN SERVER LANGSUNG");
+//   }
+// );
 
-app.listen(5000, () => {
-  console.log("Server jalan di http://localhost:5000");
-});
+module.exports = app;
