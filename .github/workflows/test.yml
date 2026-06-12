@@ -36,14 +36,14 @@ jobs:
           cache-dependency-path: backend/package-lock.json
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
         working-directory: ./backend
 
       - name: Wait for MySQL
         run: sleep 15
 
       - name: Run tests
-        run: npm test -- --coverage
+        run: npx jest --runInBand --detectOpenHandles --coverage
         working-directory: ./backend
         env:
           NODE_ENV: test
