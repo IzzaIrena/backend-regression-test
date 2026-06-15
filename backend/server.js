@@ -64,4 +64,16 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-module.exports = { app, db };
+async function connectDB() {
+  try {
+    await db.authenticate();
+    console.log("Database connected");
+
+    await db.sync();
+    console.log("Database synced");
+  } catch (err) {
+    console.log("DB Sync Error:", err);
+  }
+}
+
+module.exports = { app, db, connectDB };
