@@ -115,12 +115,26 @@ router.get(
 router.post(
   "/toggle",
   async (req, res) => {
-    const {
-      followerId,
-      followingId,
-    } = req.body;
 
-    try {
+  const {
+    followerId,
+    followingId,
+  } = req.body;
+
+  // VALIDASI BODY
+  if (
+    !followerId ||
+    !followingId
+  ) {
+    return res
+      .status(400)
+      .json({
+        error:
+          "followerId dan followingId wajib diisi",
+      });
+  }
+
+  try {
       // cek apakah sudah follow
       const check =
         await sequelize.query(
