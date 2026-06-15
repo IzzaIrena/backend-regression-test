@@ -1,5 +1,15 @@
-const app = require("./server");
+const { app, db } = require("./server");
 
-app.listen(5000, () => {
-  console.log("Server jalan di http://localhost:5000");
-});
+const PORT = process.env.PORT || 5000;
+
+db.sync()
+  .then(() => {
+    console.log("Database synced");
+
+    app.listen(PORT, () => {
+      console.log(`Server jalan di http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log("DB Sync Error:", err);
+  });

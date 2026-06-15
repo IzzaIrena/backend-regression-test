@@ -1,5 +1,5 @@
 const request = require("supertest");
-const app = require("../server");
+const { app } = require("../server");
 const db = require("../config/database");
 let token;
 
@@ -811,4 +811,8 @@ describe("Saved Recipes", () => {
     const res = await request(app).delete("/api/saved-recipes/1/1");
     expect([200, 404, 500]).toContain(res.statusCode);
   });
+});
+
+afterAll(async () => {
+  await db.close();
 });

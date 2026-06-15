@@ -1,5 +1,5 @@
 const request = require("supertest");
-const app = require("../server");
+const { app } = require("../server");
 
 describe("Regression Login API", () => {
 
@@ -107,4 +107,10 @@ describe("Regression Login API", () => {
     expect([400, 422]).toContain(res.statusCode);
   });
 
+});
+
+const db = require("../config/database");
+
+afterAll(async () => {
+  await db.close();
 });
