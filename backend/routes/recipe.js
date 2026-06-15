@@ -68,7 +68,6 @@ router.post(
         category,
         ingredients,
         steps,
-        userId,
       } = req.body;
 
       const parsedSteps =
@@ -100,23 +99,20 @@ router.post(
       });
 
       const recipe = await Recipe.create({
-
         title,
         serving,
         description,
         category,
 
-        // simpan nama file
         image:
           req.files?.image?.[0]
             ?.filename || "",
 
         ingredients,
-
         steps: JSON.stringify(parsedSteps),
 
-        userId,
-
+        // ambil dari JWT token
+        userId: req.user.id,
       });
 
       res.json({
