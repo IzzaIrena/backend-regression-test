@@ -71,6 +71,23 @@ async function connectDB() {
 
     await db.sync();
     console.log("Database synced");
+
+    // =========================
+    // CREATE FOLLOWERS TABLE
+    // =========================
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS followers (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        follower_id INT NOT NULL,
+        following_id INT NOT NULL,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          ON UPDATE CURRENT_TIMESTAMP
+      )
+    `);
+
+    console.log("Followers table ready");
+
   } catch (err) {
     console.log("DB Sync Error:", err);
   }
