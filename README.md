@@ -1,6 +1,8 @@
 # 🍽️ FoodiesHub Backend API
 
-REST API untuk aplikasi FoodiesHub — platform berbagi resep makanan menggunakan **Node.js, Express.js, Sequelize, dan MySQL**.
+REST API untuk aplikasi **FoodiesHub** — platform berbagi resep makanan menggunakan **Node.js, Express.js, Sequelize, dan MySQL**.
+
+![CI](https://github.com/IzzaIrena/backend-regression-test/actions/workflows/test.yml/badge.svg)
 
 ---
 
@@ -10,7 +12,7 @@ REST API untuk aplikasi FoodiesHub — platform berbagi resep makanan menggunaka
 
 ```bash
 git clone https://github.com/IzzaIrena/backend-regression-test.git
-cd foodieshub/backend
+cd backend-regression-test/backend
 ```
 
 ---
@@ -23,13 +25,9 @@ npm install
 
 ---
 
-### 3. Setup environment
+### 3. Setup Environment Variables
 
-```bash
-cp .env.example .env
-```
-
-Isi file `.env`:
+Buat file `.env` di folder backend, lalu isi seperti berikut:
 
 ```env
 DB_NAME=foodies
@@ -37,6 +35,8 @@ DB_USER=root
 DB_PASSWORD=
 DB_HOST=localhost
 DB_PORT=3306
+PORT=5000
+JWT_SECRET=your_secret_key
 ```
 
 ---
@@ -49,8 +49,8 @@ npm start
 
 Server akan berjalan di:
 
-```
-http://localhost:3000
+```bash
+http://localhost:5000
 ```
 
 ---
@@ -71,18 +71,20 @@ npm run test:coverage
 
 ---
 
-## 📊 Output Test (Aktual)
+## 📊 Hasil Pengujian Test (Aktual)
 
-```
+```txt
 Test Suites: 2 passed, 2 total
-Tests:       86 passed, 86 total
+Tests:       85 passed, 85 total
 Snapshots:   0 total
-Time:        4.54 s
+Time:        4.109 s
 ```
+
+Semua test berhasil dijalankan tanpa error pada local environment maupun GitHub Actions.
 
 ---
 
-## 📊 Output Coverage (Aktual)
+## 📊 Hasil Code Coverage (GitHub Actions CI)
 
 ```
 ---------------------|---------|----------|---------|---------|---------------------------------------------
@@ -111,23 +113,24 @@ All files            |   83.42 |    69.23 |   94.28 |   83.42 |
   review.js          |      68 |       50 |   66.66 |      68 | 45,77,94-132                                
 ---------------------|---------|----------|---------|---------|---------------------------------------------
 ```
+
+Target minimal coverage tugas (**75%**) telah berhasil tercapai pada kategori **Statements** dan **Lines**.
+
 ---
 
-## 🔴 Regression Testing Demonstration (Login API)
+## 🔴 Demonstrasi Regression Testing (Login API)
 
 Regression testing dilakukan untuk memastikan perubahan kode tidak merusak fitur yang sudah berjalan.
 
----
+### 1. Kondisi Awal (Kode Benar)
 
-### 1. Kondisi awal (kode benar)
+Semua test login berhasil dijalankan:
 
-Semua test login berhasil:
-
-```
-Tests: 10 passed, 10 total
+```txt
+PASS tests/regression.login.test.js
 ```
 
-Contoh validasi yang benar:
+Contoh validasi login yang benar:
 
 ```js
 if (!user) {
@@ -139,9 +142,9 @@ if (!user) {
 
 ---
 
-### 2. Simulasi bug
+### 2. Simulasi Bug (Regression)
 
-Kode diubah:
+Kode sengaja diubah:
 
 ```js
 if (!user) {
@@ -153,33 +156,33 @@ if (!user) {
 
 ---
 
-### 3. Hasil test setelah bug
+### 3. Hasil Test Setelah Bug
 
-```
-FAIL  tests/regression.login.test.js
+```txt
+FAIL tests/regression.login.test.js
 
-● should fail login with non-existent user
-
-Expected: 200
-Received: 400 / 404
+Expected: 400
+Received: 200
 ```
 
 ---
 
-### 4. Analisis hasil
+### 4. Analisis Hasil
 
-* Status code yang seharusnya konsisten menjadi **400**
-* Perubahan menjadi `200` (atau tidak sesuai expected flow) menyebabkan **test gagal**
-* Regression test berhasil mendeteksi error pada logic autentikasi
+Regression test berhasil mendeteksi perubahan perilaku API yang tidak sesuai.
+
+* Status code seharusnya **400**
+* Setelah kode diubah menjadi **200**, test langsung gagal
+* Hal ini membuktikan bahwa regression test mampu mendeteksi bug akibat perubahan kode yang tidak disengaja
 
 ---
 
-### 5. Kesimpulan regression testing
+### 5. Kesimpulan Regression Testing
 
 Regression testing terbukti efektif untuk:
 
 * Mendeteksi perubahan status response API
-* Menjaga konsistensi login behavior
+* Menjaga konsistensi behavior endpoint
 * Mencegah bug masuk ke production
 
 ---
@@ -193,16 +196,29 @@ Regression testing terbukti efektif untuk:
 | DB_PASSWORD | Password database   |
 | DB_HOST     | Host database       |
 | DB_PORT     | Port database       |
+| PORT        | Port backend        |
+| JWT_SECRET  | Secret key JWT      |
+
+---
+
+## ⚙️ Continuous Integration (CI)
+
+Project ini telah terintegrasi dengan **GitHub Actions** untuk menjalankan test secara otomatis pada setiap:
+
+* `push`
+* `pull request`
+
+Pipeline CI menjalankan:
+
+* Unit & Regression Test menggunakan **Jest + SuperTest**
+* Code Coverage Report
+* Validasi kestabilan backend
 
 ---
 
 ## 📌 Catatan Penting
 
-* Jika `.env` tidak dibuat, sistem akan memakai default config di `database.js`
-* MySQL harus sudah berjalan sebelum server dijalankan
-* Coverage saat ini menunjukkan:
-
-  * Branch coverage masih perlu ditingkatkan (55%)
-  * Routes dan profile masih area paling lemah
-
----
+* MySQL harus berjalan sebelum backend dijalankan
+* Pastikan database `foodies` sudah dibuat
+* Jalankan test menggunakan environment database yang sesuai
+* Coverage backend telah melampaui target minimal tugas (≥75%)
